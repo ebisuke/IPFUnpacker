@@ -12,7 +12,6 @@
  */
 
 #include "ies.h"
-#include "dbg/dbg.h"
 
 void ies_decrypt_string (char *string, size_t size)
 {
@@ -32,7 +31,7 @@ bool ies_read (uint8_t *ies, size_t size, IesCallback callback, void *userdata)
     // Read and sort int/str columns
     IesColumn *columns = NULL;
     if (!(columns = calloc (header->colsCount, sizeof(IesColumn)))) {
-        error ("Cannot allocate columns (Count = %d)", header->colsCount);
+        printf ("Cannot allocate columns (Count = %d)", header->colsCount);
         goto cleanup;
     }
 
@@ -136,7 +135,7 @@ bool ies_read (uint8_t *ies, size_t size, IesCallback callback, void *userdata)
                     cursorRows += sizeof(*cellStr) + cellStr->size;
                 } break;
 
-                default : error ("Unknown type : %x", curCol->type); goto cleanup; break;
+                default : printf ("Unknown type : %x", curCol->type); goto cleanup; break;
             }
         }
 
@@ -144,7 +143,7 @@ bool ies_read (uint8_t *ies, size_t size, IesCallback callback, void *userdata)
     }
 
     if (!(callback (&table, userdata))) {
-        error ("Callback failed for column '%s'.", curCol->name);
+        printf ("Callback failed for column '%s'.", curCol->name);
         goto cleanup;
     }
 

@@ -14,7 +14,7 @@
 
 // ---------- Includes ------------
 #include "zlib.h"
-#include "dbg/dbg.h"
+//#include "dbg/dbg.h"
 
 
 // ------ Structure declaration -------
@@ -42,17 +42,17 @@ zlibCompress (
 
     int result;
     if ((result = deflateInit (&stream, 1)) != Z_OK) {
-        warning("Can't init compression : error code = %x.", result);
+        printf("Can't init compression : error code = %x.", result);
         return 0;
     }
 
     if ((result = deflate (&stream, Z_FINISH) != Z_STREAM_END)) {
-        warning("Can't compress : error code = %x.", result);
+        printf("Can't compress : error code = %x.", result);
         return 0;
     }
 
     if ((result = deflateEnd (&stream) != Z_OK)) {
-        warning("Can't end compression : error code = %x", result);
+        printf("Can't end compression : error code = %x", result);
         return 0;
     }
 
@@ -80,21 +80,21 @@ zlibDecompress (
     stream.zfree = 0;
 
     if (inflateInit2_(&stream, -15, zlibVersion(), sizeof(z_stream))) {
-        buffer_print(data, dataSize, "Buffer : ");
-        error("Can't init decompression.");
+        //buffer_print(data, dataSize, "Buffer : ");
+        printf("Can't init decompression.");
         return 0;
     }
 
     int ret;
     if ((ret = inflate(&stream, Z_FINISH)) != Z_STREAM_END) {
         // buffer_print(data, dataSize, "Buffer : ");
-        error("Can't decompress. Error : %d", ret);
+        printf("Can't decompress. Error : %d", ret);
         return 0;
     }
 
     if (inflateEnd(&stream)) {
-        buffer_print(data, dataSize, "Buffer : ");
-        error("Can't end decompression.");
+        //buffer_print(data, dataSize, "Buffer : ");
+        printf("Can't end decompression.");
         return 0;
     }
 

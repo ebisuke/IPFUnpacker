@@ -12,7 +12,6 @@
  */
 
 #include "ipf.h"
-#include "dbg/dbg.h"
 
 #pragma pack (push, 1)
 typedef struct {
@@ -46,7 +45,7 @@ bool ipf_read (uint8_t *ipf, size_t size, IpfCallback callback, void *userdata)
     char magic[] = {0x50, 0x4b, 0x05, 0x06};
 
     if (memcmp (&archiveHeader->magic, magic, sizeof(magic)) != 0) {
-        error ("Wrong magic word : %#x", archiveHeader->magic);
+        printf ("Wrong magic word : %#x", archiveHeader->magic);
         goto cleanup;
     }
 
@@ -71,7 +70,7 @@ bool ipf_read (uint8_t *ipf, size_t size, IpfCallback callback, void *userdata)
         strncpy (filename, filename_ptr, ipfInfo->filenameLength);
 
         if (!(callback (data, dataSize, archive, filename, userdata))) {
-            error ("callback failed for '%s:%s'", archive, filename);
+            printf ("callback failed for '%s:%s'", archive, filename);
         }
 
         cursor += sizeof(*ipfInfo);

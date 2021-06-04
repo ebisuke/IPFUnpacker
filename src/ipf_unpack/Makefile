@@ -1,6 +1,6 @@
 
 TARGET := ipf_unpack
-
+CC       := /opt/homebrew/Cellar/gcc/11.1.0_1/bin/gcc-11
 SRCEXT   := c
 SRCDIR   := .
 INCPATH  := ..
@@ -15,7 +15,7 @@ INCLUDES := -I. \
 			-I$(COMMON_DIR)
 
 # C compiler flag
-CFLAGS := -D_GNU_SOURCE -D__DBG_ACTIVATED__ -Wall $(INCLUDES) -c -Wno-strict-aliasing
+CFLAGS := -D_GNU_SOURCE -D__DBG_ACTIVATED__ -D_XOPEN_SOURCE=600 -Wall $(INCLUDES) -c -Wno-strict-aliasing 
 
 # Linker library flags
 LIBDIRS  := -L$(API_DIR)/lib
@@ -30,7 +30,7 @@ OBJS	:= $(patsubst %.$(SRCEXT),$(OBJDIR)/%.o,$(SRCS) $(COMMONS))
 ###########################################################################
 # Rules to compile our files  - Do not change below this line!
 ###########################################################################
-CFLAGS += -std=gnu99
+CFLAGS += -std=gnu11
 
 .PHONY: all debug release clean distclean 
 

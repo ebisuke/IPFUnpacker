@@ -12,7 +12,6 @@
  */
 
 #include "ipf_unpack.h"
-#include "dbg/dbg.h"
 #include "crc32/crc32.h"
 #include "fs/fs.h"
 #include "zlib/zlib.h"
@@ -173,7 +172,7 @@ static bool process_ipf (uint8_t *data, size_t dataSize, char *archive, char *fi
             // We don't decompress all the files, only those interesting
             if (worth_decompress (filename, extensions, extensionsCount) && !(crypted_extension (filename))) {
                 if (!(zlibDecompress (zlib, data, dataSize))) {
-                    error ("Cannot decompress '%s'.", filename);
+                    printf ("Cannot decompress '%s'.", filename);
                     goto cleanup;
                 }
 
@@ -187,7 +186,7 @@ static bool process_ipf (uint8_t *data, size_t dataSize, char *archive, char *fi
             name = (name) ? name : filename;
 
             if (!(path && name)) {
-                error ("Cannot extract directory / filename : %s / %s.", archive, filename);
+                printf ("Cannot extract directory / filename : %s / %s.", archive, filename);
                 goto cleanup;
             }
 
@@ -209,7 +208,7 @@ static bool process_ipf (uint8_t *data, size_t dataSize, char *archive, char *fi
                 }
                 else {
                     if (!(file_write (targetFullName, fileContent, fileSize))) {
-                        error ("Cannot write data to '%s'.", targetFullName);
+                        printf ("Cannot write data to '%s'.", targetFullName);
                         goto cleanup;
                     }
                 }
@@ -219,7 +218,7 @@ static bool process_ipf (uint8_t *data, size_t dataSize, char *archive, char *fi
                 char md5[33] = {0};
                 MD5_bufferEx (data, dataSize, md5);
                 if (!(file_write (targetFullName, (uint8_t *) md5, sizeof(md5) - 1))) {
-                    error ("Cannot write md5 to '%s'.", targetFullName);
+                    printf ("Cannot write md5 to '%s'.", targetFullName);
                     goto cleanup;
                 }
             }
@@ -247,7 +246,7 @@ cleanup:
 int main (int argc, char **argv)
 {
     if (argc < 3) {
-        info ("Usage : ipf_decrypt.exe <crypted IPF> <encrypt|decrypt|extract> [extensions worth decompressing...]");
+        printf ("Usage : ipf_decrypt.exe <crypted IPF> <encrypt|decrypt|extract> [extensions worth decompressing...]");
         return 1;
     }
 
@@ -263,13 +262,13 @@ int main (int argc, char **argv)
     else if (strcmp (argv[2], "extract") == 0) {
         params.action = ACTION_EXTRACT;
         if (!(params.zlib = calloc (1, sizeof(Zlib)))) {
-            error ("Cannot allocate zlib.");
+            printf ("Cannot allocate zlib.");
             return 1;
         }
         mkpath ("./extract");
     }
     else {
-        error ("Unknown action '%s'", argv[2]);
+        printf ("Unknown action '%s'", argv[2]);
         return 1;
     }
     if (argc == 3) {
@@ -286,25 +285,25 @@ int main (int argc, char **argv)
     uint8_t *ipf;
 
     if (!(ipf = file_map (argv[1], &size))) {
-        error ("Cannot map the ipf '%s'", argv[1]);
+        printf ("Cannot map the ipf '%s'", argv[1]);
         return 1;
     }
 
     // Parsing IPF
-    info ("Parsing IPF '%s' (%s) ...", argv[1], argv[2]);
+    printf ("Parsing IPF '%s' (%s) ...", argv[1], argv[2]);
     if (!(ipf_read (ipf, size, process_ipf, &params))) {
-        error ("Cannot read and ipf_decrypt the file '%s'", argv[1]);
+        printf ("Cannot read and ipf_decrypt the file '%s'", argv[1]);
         return 1;
     }
 
     if (!(file_flush (argv[1], ipf, size))) {
-        error ("Cannot flush the file.");
+        printf ("Cannot flush the file.");
         return 1;
     }
 
     // Cleaning
     free (params.zlib);
-    info ("Done!");
+    printf ("Done!");
 
     return 0;
 }

@@ -13,4 +13,12 @@ cd IPFUnpacker
 make clean && make release
 ```
 
+in macos (need xcode-commandline)
+```
+brew install zlib
+git clone https://github.com/r1emu/IPFUnpacker.git
+cd IPFUnpacker
+make clean && make release
+```
+
 The executable "ipf_unpack" should have been compiled fine and should be present inside your IPFUnpacker folder.
